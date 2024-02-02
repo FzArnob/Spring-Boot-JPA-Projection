@@ -22,10 +22,12 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
+        // Ref:1 JPA projection for performance optimization (Only id, username and email needed for each user)
         return userRepository.findByDeletedFalse();
     }
 
-    public UserDto getUserById(Long id) throws RestException.ResourceNotFoundException {
+    public User getUserById(Long id) throws RestException.ResourceNotFoundException {
+        // Ref:2 Avoided JPA projection for common usage in softDeleteUser(Long id)
         return userRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new RestException.ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND.getMessage(id)));
     }
@@ -45,8 +47,10 @@ public class UserService {
     @Transactional
     public void softDeleteUser(Long id) throws RestException.ResourceNotFoundException {
         // check if user exist or not
-        getUserById(id);
-        userRepository.softDeleteById(id);
+        // Ref:2 Avoided JPA projection in getUserById(id) for common usage
+        User user = getUserById(id);
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 }
 
