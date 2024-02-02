@@ -1,5 +1,6 @@
 package fzs.lab.jpa.projection.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,16 +20,30 @@ public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @Column(nullable = false)
     private String name;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @ManyToMany(mappedBy = "roles")
     private Set<User> users;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @ManyToMany
+    @JoinTable(
+            name = "role_permissions",
+            joinColumns = @JoinColumn(name = "role_id"),
+            inverseJoinColumns = @JoinColumn(name = "permission_id")
+    )
+    private Set<Permission> permissions;
     @Column(name = "created_at", nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
+
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
+
     @Column(name = "deleted", nullable = false)
     private boolean deleted = false;
 
