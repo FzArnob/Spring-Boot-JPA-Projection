@@ -1,5 +1,6 @@
 package fzs.lab.jpa.projection.service;
 
+import fzs.lab.jpa.projection.api.UserController;
 import fzs.lab.jpa.projection.domain.User;
 import fzs.lab.jpa.projection.dto.UserDto;
 import fzs.lab.jpa.projection.exception.ErrorMessages;
@@ -33,7 +34,7 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(User user) throws RestException.EmailAlreadyExistsException {
+    public User createUser(UserController.CreateUserInput user) throws RestException.EmailAlreadyExistsException {
         if (userRepository.existsByEmailAndDeletedFalse(user.getEmail())) {
             throw new RestException.EmailAlreadyExistsException(ErrorMessages.EMAIL_ALREADY_EXISTS.getMessage(user.getEmail()));
         }
@@ -42,6 +43,14 @@ public class UserService {
         newUser.setEmail(user.getEmail());
         newUser.setAge(user.getAge());
         return userRepository.save(newUser);
+    }
+    @Transactional
+    public User updateUser(UserController.UpdateUserInput user) throws RestException.ResourceNotFoundException {
+        User updateUser = getUserById(user.getId());
+        updateUser.setUsername(user.getUsername());
+        updateUser.setEmail(user.getEmail());
+        updateUser.setAge(user.getAge());
+        return userRepository.save(updateUser);
     }
 
     @Transactional
