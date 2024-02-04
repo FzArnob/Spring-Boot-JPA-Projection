@@ -2,6 +2,7 @@ package fzs.lab.jpa.projection.response;
 
 public enum SuccessMessages {
     USER_CREATED("Successfully created user: %s"),
+    USER_UPDATED("Successfully updated user: %s"),
     USER_DETAIL("Successfully fetched user with id: %s"),
     USER_LIST("Successfully fetched total: %s users"),
     USER_DELETED("Successfully deleted user with id: %s");
