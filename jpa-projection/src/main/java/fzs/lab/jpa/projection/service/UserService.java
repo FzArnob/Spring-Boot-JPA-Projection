@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public User getUserById(Long id) throws RestException.ResourceNotFoundException {
-        // Ref:2 Avoided JPA projection for common usage in softDeleteUser(Long id)
+        // Ref:2 Avoided JPA projection for common usage in softDeleteUser(Long id) and updateUser(UpdateUserInput user)
         return userRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new RestException.ResourceNotFoundException(ErrorMessages.USER_NOT_FOUND.getMessage(id)));
     }
@@ -46,6 +46,8 @@ public class UserService {
     }
     @Transactional
     public User updateUser(UserController.UpdateUserInput user) throws RestException.ResourceNotFoundException {
+        // check if user exist or not
+        // Ref:2 Avoided JPA projection in getUserById(id) for common usage
         User updateUser = getUserById(user.getId());
         updateUser.setUsername(user.getUsername());
         updateUser.setEmail(user.getEmail());
