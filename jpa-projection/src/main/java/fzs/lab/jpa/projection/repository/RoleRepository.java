@@ -10,7 +10,11 @@ import java.util.Optional;
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
     // Ref:1 JPA projection for performance optimization
-    @Query(value = "SELECT r.id, r.name, count(p) as totalPermissions FROM Role r LEFT JOIN r.permissions p WHERE r.deleted = false GROUP BY r.id")
+    @Query("SELECT r.id as id, r.name as name, COUNT(p) as totalPermissions " +
+            "FROM Role r " +
+            "LEFT JOIN r.permissions p " +
+            "WHERE r.deleted = false " +
+            "GROUP BY r.id, r.name")
     List<RoleDto> findByDeletedFalseWithPermissionCount();
 
     // Ref:2 Avoiding JPA projection to get Full entity for later manipulation

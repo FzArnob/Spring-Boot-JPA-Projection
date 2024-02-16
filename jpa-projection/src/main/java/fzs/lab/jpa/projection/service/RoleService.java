@@ -23,10 +23,12 @@ public class RoleService {
     }
 
     public List<RoleDto> getAllRoles() {
+        // Ref:1 JPA projection with sql calculation for performance optimization (Only id, name and permission count needed for each role)
         return roleRepository.findByDeletedFalseWithPermissionCount();
     }
 
     public Role getRoleById(Long id) throws RestExceptionHandler.ResourceNotFoundException {
+        // Ref:2 Avoided JPA projection for common usage in softDeleteRole(Long id) and updateRole(UpdateRoleInput role)
         return roleRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new RestExceptionHandler.ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getMessage(id)));
     }
@@ -43,6 +45,8 @@ public class RoleService {
 
     @Transactional
     public Role updateRole(RoleController.UpdateRoleInput role) throws RestExceptionHandler.ResourceNotFoundException {
+        // check if role exist or not
+        // Ref:2 Avoided JPA projection in getRoleById(id) for common usage
         Role updateRole = getRoleById(role.getId());
         updateRole.setName(role.getName());
         return roleRepository.save(updateRole);
@@ -50,6 +54,8 @@ public class RoleService {
 
     @Transactional
     public void softDeleteRole(Long id) throws RestExceptionHandler.ResourceNotFoundException {
+        // check if role exist or not
+        // Ref:2 Avoided JPA projection in getRoleById(id) for common usage
         Role role = getRoleById(id);
         role.setDeleted(true);
         roleRepository.save(role);

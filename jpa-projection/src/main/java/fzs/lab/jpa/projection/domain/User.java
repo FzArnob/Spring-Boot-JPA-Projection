@@ -24,7 +24,7 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false, columnDefinition = "integer check (age > 0)")
+    @Column(nullable = false)
     private int age;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -44,7 +44,7 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(name = "deleted", nullable = false, columnDefinition = "tinyint(1)")
     private boolean deleted = false;
 
     @PrePersist

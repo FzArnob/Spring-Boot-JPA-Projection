@@ -44,7 +44,7 @@ public class Role {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 
-    @Column(name = "deleted", nullable = false)
+    @Column(name = "deleted", nullable = false, columnDefinition = "tinyint(1)")
     private boolean deleted = false;
 
     @PrePersist
