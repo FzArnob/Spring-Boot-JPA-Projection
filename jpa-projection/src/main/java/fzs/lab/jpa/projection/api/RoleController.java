@@ -2,10 +2,11 @@ package fzs.lab.jpa.projection.api;
 
 import fzs.lab.jpa.projection.domain.Role;
 import fzs.lab.jpa.projection.dto.RoleDto;
-import fzs.lab.jpa.projection.exception.RestException;
+import fzs.lab.jpa.projection.exception.RestExceptionHandler;
 import fzs.lab.jpa.projection.response.RestResponse;
 import fzs.lab.jpa.projection.response.SuccessMessages;
 import fzs.lab.jpa.projection.service.RoleService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -51,27 +52,27 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestResponse.SuccessResponse> getRoleById(@PathVariable Long id) throws RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> getRoleById(@PathVariable Long id) throws RestExceptionHandler.ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.ROLE_DETAIL.getMessage(id), roleService.getRoleById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<RestResponse.SuccessResponse> createRole(@RequestBody CreateRoleInput role) throws RestException.ResourceAlreadyExistsException {
+    public ResponseEntity<RestResponse.SuccessResponse> createRole(@RequestBody @Valid CreateRoleInput role) throws RestExceptionHandler.ResourceAlreadyExistsException {
         Role newRole = roleService.createRole(role);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.ROLE_CREATED.getMessage(newRole.getName()), newRole));
     }
 
     @PutMapping
-    public ResponseEntity<RestResponse.SuccessResponse> updateRole(@RequestBody UpdateRoleInput role) throws RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> updateRole(@RequestBody @Valid UpdateRoleInput role) throws RestExceptionHandler.ResourceNotFoundException {
         Role updatedRole = roleService.updateRole(role);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.ROLE_UPDATED.getMessage(updatedRole.getName()), updatedRole));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<RestResponse.SuccessResponse> deleteRole(@PathVariable Long id) throws RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> deleteRole(@PathVariable Long id) throws RestExceptionHandler.ResourceNotFoundException {
         roleService.softDeleteRole(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.ROLE_DELETED.getMessage(id), null));

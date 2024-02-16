@@ -4,7 +4,7 @@ import fzs.lab.jpa.projection.api.RoleController;
 import fzs.lab.jpa.projection.domain.Role;
 import fzs.lab.jpa.projection.dto.RoleDto;
 import fzs.lab.jpa.projection.exception.ErrorMessages;
-import fzs.lab.jpa.projection.exception.RestException;
+import fzs.lab.jpa.projection.exception.RestExceptionHandler;
 import fzs.lab.jpa.projection.repository.RoleRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +26,15 @@ public class RoleService {
         return roleRepository.findByDeletedFalseWithPermissionCount();
     }
 
-    public Role getRoleById(Long id) throws RestException.ResourceNotFoundException {
+    public Role getRoleById(Long id) throws RestExceptionHandler.ResourceNotFoundException {
         return roleRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new RestException.ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getMessage(id)));
+                .orElseThrow(() -> new RestExceptionHandler.ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getMessage(id)));
     }
 
     @Transactional
-    public Role createRole(RoleController.CreateRoleInput role) throws RestException.ResourceAlreadyExistsException {
+    public Role createRole(RoleController.CreateRoleInput role) throws RestExceptionHandler.ResourceAlreadyExistsException {
         if (roleRepository.existsByNameAndDeletedFalse(role.getName())) {
-            throw new RestException.ResourceAlreadyExistsException(ErrorMessages.ROLE_ALREADY_EXISTS.getMessage(role.getName()));
+            throw new RestExceptionHandler.ResourceAlreadyExistsException(ErrorMessages.ROLE_ALREADY_EXISTS.getMessage(role.getName()));
         }
         Role newRole = new Role();
         newRole.setName(role.getName());
@@ -42,14 +42,14 @@ public class RoleService {
     }
 
     @Transactional
-    public Role updateRole(RoleController.UpdateRoleInput role) throws RestException.ResourceNotFoundException {
+    public Role updateRole(RoleController.UpdateRoleInput role) throws RestExceptionHandler.ResourceNotFoundException {
         Role updateRole = getRoleById(role.getId());
         updateRole.setName(role.getName());
         return roleRepository.save(updateRole);
     }
 
     @Transactional
-    public void softDeleteRole(Long id) throws RestException.ResourceNotFoundException {
+    public void softDeleteRole(Long id) throws RestExceptionHandler.ResourceNotFoundException {
         Role role = getRoleById(id);
         role.setDeleted(true);
         roleRepository.save(role);

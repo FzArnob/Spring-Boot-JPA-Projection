@@ -2,10 +2,11 @@ package fzs.lab.jpa.projection.api;
 
 import fzs.lab.jpa.projection.domain.User;
 import fzs.lab.jpa.projection.dto.UserDto;
-import fzs.lab.jpa.projection.exception.RestException;
+import fzs.lab.jpa.projection.exception.RestExceptionHandler;
 import fzs.lab.jpa.projection.response.RestResponse;
 import fzs.lab.jpa.projection.response.SuccessMessages;
 import fzs.lab.jpa.projection.service.UserService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -31,7 +32,6 @@ public class UserController {
         @NotBlank(message = "Email is required")
         @Email(message = "Invalid email address")
         private String email;
-        @NotNull(message = "Age is required")
         @Min(value = 1, message = "Age must be greater than 0")
         private int age;
     }
@@ -46,7 +46,6 @@ public class UserController {
         @NotBlank(message = "Email is required")
         @Email(message = "Invalid email address")
         private String email;
-        @NotNull(message = "Age is required")
         @Min(value = 1, message = "Age must be greater than 0")
         private int age;
     }
@@ -66,27 +65,27 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestResponse.SuccessResponse> getUserById(@PathVariable Long id) throws RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> getUserById(@PathVariable @NotNull(message = "Id is required") Long id) throws RestExceptionHandler.ResourceNotFoundException {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_DETAIL.getMessage(id), userService.getUserById(id)));
     }
 
     @PostMapping
-    public ResponseEntity<RestResponse.SuccessResponse> createUser(@RequestBody CreateUserInput user) throws RestException.ResourceAlreadyExistsException {
+    public ResponseEntity<RestResponse.SuccessResponse> createUser(@RequestBody @Valid CreateUserInput user) throws RestExceptionHandler.ResourceAlreadyExistsException {
         User newUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_CREATED.getMessage(newUser.getEmail()), newUser));
     }
 
     @PutMapping
-    public ResponseEntity<RestResponse.SuccessResponse> updateUser(@RequestBody UpdateUserInput user) throws RestException.ResourceAlreadyExistsException, RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> updateUser(@RequestBody @Valid UpdateUserInput user) throws RestExceptionHandler.ResourceAlreadyExistsException, RestExceptionHandler.ResourceNotFoundException {
         User newUser = userService.updateUser(user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_UPDATED.getMessage(newUser.getEmail()), newUser));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<RestResponse.SuccessResponse> deleteUser(@PathVariable Long id) throws RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> deleteUser(@PathVariable @NotNull(message = "Id is required") Long id) throws RestExceptionHandler.ResourceNotFoundException {
         userService.softDeleteUser(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_DELETED.getMessage(id), null));
