@@ -1,8 +1,11 @@
 package fzs.lab.jpa.projection.api;
 
 import fzs.lab.jpa.projection.domain.Role;
+import fzs.lab.jpa.projection.dto.RoleDto;
+import fzs.lab.jpa.projection.exception.RestException;
 import fzs.lab.jpa.projection.response.RestResponse;
 import fzs.lab.jpa.projection.response.SuccessMessages;
+import fzs.lab.jpa.projection.service.RoleService;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/roles")
@@ -52,7 +57,7 @@ public class RoleController {
     }
 
     @PostMapping
-    public ResponseEntity<RestResponse.SuccessResponse> createRole(@RequestBody CreateRoleInput role) {
+    public ResponseEntity<RestResponse.SuccessResponse> createRole(@RequestBody CreateRoleInput role) throws RestException.ResourceAlreadyExistsException {
         Role newRole = roleService.createRole(role);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.ROLE_CREATED.getMessage(newRole.getName()), newRole));

@@ -72,14 +72,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<RestResponse.SuccessResponse> createUser(@RequestBody CreateUserInput user) throws RestException.EmailAlreadyExistsException {
+    public ResponseEntity<RestResponse.SuccessResponse> createUser(@RequestBody CreateUserInput user) throws RestException.ResourceAlreadyExistsException {
         User newUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_CREATED.getMessage(newUser.getEmail()), newUser));
     }
 
     @PutMapping
-    public ResponseEntity<RestResponse.SuccessResponse> updateUser(@RequestBody UpdateUserInput user) throws RestException.EmailAlreadyExistsException, RestException.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> updateUser(@RequestBody UpdateUserInput user) throws RestException.ResourceAlreadyExistsException, RestException.ResourceNotFoundException {
         User newUser = userService.updateUser(user);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_UPDATED.getMessage(newUser.getEmail()), newUser));

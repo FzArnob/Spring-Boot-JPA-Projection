@@ -34,9 +34,9 @@ public class UserService {
     }
 
     @Transactional
-    public User createUser(UserController.CreateUserInput user) throws RestException.EmailAlreadyExistsException {
+    public User createUser(UserController.CreateUserInput user) throws RestException.ResourceAlreadyExistsException {
         if (userRepository.existsByEmailAndDeletedFalse(user.getEmail())) {
-            throw new RestException.EmailAlreadyExistsException(ErrorMessages.EMAIL_ALREADY_EXISTS.getMessage(user.getEmail()));
+            throw new RestException.ResourceAlreadyExistsException(ErrorMessages.EMAIL_ALREADY_EXISTS.getMessage(user.getEmail()));
         }
         User newUser = new User();
         newUser.setUsername(user.getUsername());

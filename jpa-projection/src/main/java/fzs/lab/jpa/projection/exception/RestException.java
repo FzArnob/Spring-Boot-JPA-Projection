@@ -20,7 +20,7 @@ public class RestException {
 
     @AllArgsConstructor
     @Getter
-    public static class EmailAlreadyExistsException extends Exception {
+    public static class ResourceAlreadyExistsException extends Exception {
         private final String message;
     }
 
@@ -32,9 +32,9 @@ public class RestException {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
     @ResponseBody
-    public ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException ex) {
+    public ResponseEntity<ErrorResponse> handleEmailAlreadyExistsException(ResourceAlreadyExistsException ex) {
         log.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(ex.getMessage()));
