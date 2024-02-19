@@ -65,9 +65,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RestResponse.SuccessResponse> getUserById(@PathVariable @NotNull(message = "Id is required") Long id) throws RestExceptionHandler.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> getUserById(@PathVariable Long id) throws RestExceptionHandler.ResourceNotFoundException {
+       User user = userService.getUserById(id);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(new RestResponse.SuccessResponse(SuccessMessages.USER_DETAIL.getMessage(id), userService.getUserById(id)));
+                .body(new RestResponse.SuccessResponse(SuccessMessages.USER_DETAIL.getMessage(id), user));
     }
 
     @PostMapping
@@ -85,9 +86,20 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<RestResponse.SuccessResponse> deleteUser(@PathVariable @NotNull(message = "Id is required") Long id) throws RestExceptionHandler.ResourceNotFoundException {
+    public ResponseEntity<RestResponse.SuccessResponse> deleteUser(@PathVariable Long id) throws RestExceptionHandler.ResourceNotFoundException {
         userService.softDeleteUser(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new RestResponse.SuccessResponse(SuccessMessages.USER_DELETED.getMessage(id), null));
+    }
+    @PostMapping("/{userId}/addRole/{roleId}")
+    public ResponseEntity<String> addRoleToUser(@PathVariable Long userId, @PathVariable Long roleId) throws RestExceptionHandler.ResourceNotFoundException {
+        userService.addRoleToUser(userId, roleId);
+        return ResponseEntity.ok("Role added successfully");
+    }
+
+    @PostMapping("/{userId}/removeRole/{roleId}")
+    public ResponseEntity<String> removeRoleFromUser(@PathVariable Long userId, @PathVariable Long roleId) throws RestExceptionHandler.ResourceNotFoundException {
+        userService.removeRoleFromUser(userId, roleId);
+        return ResponseEntity.ok("Role removed successfully");
     }
 }

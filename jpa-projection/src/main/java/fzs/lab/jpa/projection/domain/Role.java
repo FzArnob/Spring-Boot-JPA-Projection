@@ -1,16 +1,15 @@
 package fzs.lab.jpa.projection.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 @Table(name = "role")
+@ToString(exclude = "users")
 @Entity
 @Getter
 @Setter
@@ -24,12 +23,11 @@ public class Role {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    @ManyToMany(mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
     private Set<User> users;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "role_permissions",
             joinColumns = @JoinColumn(name = "role_id"),
@@ -40,6 +38,7 @@ public class Role {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;

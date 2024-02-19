@@ -28,7 +28,7 @@ public class User {
     private int age;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
